@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:udacity/converter_route.dart';
+import 'package:udacity/unit.dart';
 
 // We use an underscore to indicate that these variables are private.
 // See https://www.dartlang.org/guides/language/effective-dart/design#libraries
@@ -13,6 +15,7 @@ class Category extends StatelessWidget {
   final String name;
   final ColorSwatch color;
   final IconData iconLocation;
+  final List<Unit> units;
 
   /// Creates a [Category].
   ///
@@ -26,7 +29,13 @@ class Category extends StatelessWidget {
     required this.name,
     required this.color,
     required this.iconLocation,
+    required this.units,
   }) : super(key: key);
+
+  /// Navigates to the [ConverterRoute].
+  void _navigateToConverter(BuildContext context) {
+    // TODO: Using the Navigator, navigate to the [ConverterRoute]
+  }
 
   /// Builds a custom widget that shows [Category] information.
   ///
@@ -47,8 +56,25 @@ class Category extends StatelessWidget {
           splashColor: color,
           // We can use either the () => function() or the () { function(); }
           // syntax.
+          // TODO: Update this onTap property to call _navigateToConverter()
           onTap: () {
-            print('I was tapped!');
+            Navigator.push(context,
+                MaterialPageRoute(builder: (BuildContext context) {
+              return Scaffold(
+                backgroundColor: color,
+                appBar: AppBar(
+                  title: Text(
+                    name,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  backgroundColor: Colors.transparent,
+                ),
+                body: ConverterRoute(
+                  units: units,
+                  color: color,
+                ),
+              );
+            }));
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'category.dart';
-// TODO: Check if we need to import anything
+import 'package:udacity/unit.dart';
 
-// TODO: Define any constants
+import 'category.dart';
+
+final _backgroundColor = Colors.green[100];
 
 /// Category Route (screen).
 ///
@@ -11,7 +12,7 @@ import 'category.dart';
 ///
 /// While it is named CategoryRoute, a more apt name would be CategoryScreen,
 /// because it is responsible for the UI at the route's destination.
-class CategoryRoute extends StatelessWidget {
+class CategoryRoute extends StatefulWidget {
   const CategoryRoute({Key? key}) : super(key: key);
 
   static const _categoryNames = <String>[
@@ -37,39 +38,72 @@ class CategoryRoute extends StatelessWidget {
   ];
 
   @override
+  State<CategoryRoute> createState() => _CategoryRouteState();
+}
+
+class _CategoryRouteState extends State<CategoryRoute> {
+  /// Makes the correct number of rows for the list view.
+  ///
+  /// For portrait, we use a [ListView].
+  Widget _buildCategoryWidgets(List<Widget> categories) {
+    return ListView.builder(
+      itemBuilder: (BuildContext context, int index) => categories[index],
+      itemCount: categories.length,
+    );
+  }
+
+  /// Returns a list of mock [Unit]s.
+  List<Unit> _retrieveUnitList(String categoryName) {
+    return List.generate(10, (int i) {
+      i += 1;
+      return Unit(
+        name: '$categoryName Unit $i',
+        conversion: i.toDouble(),
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // TODO: Create a list of the eight Categories, using the names and colors
-    // from above. Use a placeholder icon, such as `Icons.cake` for each
-    // Category. We'll add custom icons later.
-
-    // TODO: Create a list view of the Categories
-
     final categories = <Category>[];
-    for (int i = 0; i < _categoryNames.length; i++) {
-      categories.add(Category(
-          name: _categoryNames[i],
-          color: _baseColors[i] as ColorSwatch<dynamic>,
-          iconLocation: Icons.cake));
+
+    @override
+    void initState() {
+      // TODO: implement initState
+      super.initState();
+
+      for (var i = 0; i < CategoryRoute._categoryNames.length; i++) {
+        categories.add(Category(
+          name: CategoryRoute._categoryNames[i],
+          color: CategoryRoute._baseColors[i] as ColorSwatch<dynamic>,
+          iconLocation: Icons.cake,
+          units: _retrieveUnitList(CategoryRoute._categoryNames[i]),
+        ));
+      }
     }
-    return Scaffold(
-      backgroundColor: Colors.green[100],
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text("Unit Converter",
-            style: TextStyle(fontSize: 30, color: Colors.black)),
-      ),
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListView.builder(
-            itemCount: categories.length,
-            itemBuilder: (context, index) {
-              return categories[index];
-            },
-          ),
+
+    final listView = Container(
+      color: _backgroundColor,
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: _buildCategoryWidgets(categories),
+    );
+
+    final appBar = AppBar(
+      elevation: 0.0,
+      title: const Text(
+        'Unit Converter',
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 30.0,
         ),
       ),
+      centerTitle: true,
+      backgroundColor: _backgroundColor,
+    );
+
+    return Scaffold(
+      appBar: appBar,
+      body: listView,
     );
   }
 }
