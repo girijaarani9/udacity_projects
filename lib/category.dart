@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:udacity/converter_route.dart';
-import 'package:udacity/unit.dart';
+
+import 'converter_route.dart';
+import 'unit.dart';
 
 // We use an underscore to indicate that these variables are private.
 // See https://www.dartlang.org/guides/language/effective-dart/design#libraries
@@ -34,7 +35,28 @@ class Category extends StatelessWidget {
 
   /// Navigates to the [ConverterRoute].
   void _navigateToConverter(BuildContext context) {
-    // TODO: Using the Navigator, navigate to the [ConverterRoute]
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (BuildContext context) {
+        return Scaffold(
+          appBar: AppBar(
+            elevation: 1.0,
+            title: Text(
+              name,
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            centerTitle: true,
+            backgroundColor: color,
+          ),
+          body: ConverterRoute(
+            color: color,
+            units: units,
+          ),
+          // This prevents the attempt to resize the screen when the keyboard
+          // is opened
+          resizeToAvoidBottomInset: false,
+        );
+      },
+    ));
   }
 
   /// Builds a custom widget that shows [Category] information.
@@ -52,30 +74,12 @@ class Category extends StatelessWidget {
         height: _rowHeight,
         child: InkWell(
           borderRadius: _borderRadius,
+          // TODO: Use the highlight and splash colors from the ColorSwatch
           highlightColor: color,
           splashColor: color,
           // We can use either the () => function() or the () { function(); }
           // syntax.
-          // TODO: Update this onTap property to call _navigateToConverter()
-          onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (BuildContext context) {
-              return Scaffold(
-                backgroundColor: color,
-                appBar: AppBar(
-                  title: Text(
-                    name,
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  backgroundColor: Colors.transparent,
-                ),
-                body: ConverterRoute(
-                  units: units,
-                  color: color,
-                ),
-              );
-            }));
-          },
+          onTap: () => _navigateToConverter(context),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
