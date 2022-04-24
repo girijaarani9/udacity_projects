@@ -29,6 +29,8 @@ class _UnitConverterState extends State<UnitConverter> {
   String _convertedValue = '';
   List<DropdownMenuItem>? _unitMenuItems;
   bool _showValidationError = false;
+  // TODO: Pass this into the TextField so that the input value persists
+  final _inputKey = GlobalKey(debugLabel: 'inputText');
 
   @override
   void initState() {
@@ -37,8 +39,15 @@ class _UnitConverterState extends State<UnitConverter> {
     _setDefaults();
   }
 
-  // TODO: _createDropdownMenuItems() and _setDefaults() should also be called
-  // each time the user switches [Categories].
+  @override
+  void didUpdateWidget(UnitConverter old) {
+    super.didUpdateWidget(old);
+    // We update our [DropdownMenuItem] units when we switch [Categories].
+    if (old.category != widget.category) {
+      _createDropdownMenuItems();
+      _setDefaults();
+    }
+  }
 
   /// Creates fresh list of [DropdownMenuItem] widgets, given a list of [Unit]s.
   void _createDropdownMenuItems() {
@@ -64,6 +73,9 @@ class _UnitConverterState extends State<UnitConverter> {
       _fromValue = widget.category.units[0];
       _toValue = widget.category.units[1];
     });
+    if (_inputValue != null) {
+      _updateConversion();
+    }
   }
 
   /// Clean up conversion; trim trailing zeros, e.g. 5.500 -> 5.5, 10.0 -> 10
@@ -229,8 +241,8 @@ class _UnitConverterState extends State<UnitConverter> {
       ),
     );
 
-    final converter = Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    // TODO: Use a ListView instead of a Column
+    final converter = ListView(
       children: [
         input,
         arrows,
@@ -238,9 +250,20 @@ class _UnitConverterState extends State<UnitConverter> {
       ],
     );
 
+    // TODO: Use an OrientationBuilder to add a width to the unit converter
+    // in landscape mode
     return Padding(
-      padding: _padding,
-      child: converter,
-    );
+        padding: _padding,
+        child: OrientationBuilder(builder: (BuildContext context, orientation) {
+          if (orientation == Orientation.portrait) {
+            return (converter);
+          } else
+            return Center(
+              child: SizedBox(
+                child: converter,
+                width: 450,
+              ),
+            );
+        }));
   }
 }
